@@ -34,6 +34,7 @@ export default class LoginPage extends Component {
       const res = JSON.parse(response.request.response);
       if (res.status) {
         this.props.auth();
+        localStorage.setItem('jwttoken', res.token);
         this.props.history.push('/welcome') 
       } else {
         this.props.history.push('/failed')
