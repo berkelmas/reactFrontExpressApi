@@ -1,61 +1,40 @@
 import React, {Component} from 'react'
-import {BrowserRouter as Router, Route} from 'react-router-dom';
-import axios from 'axios';
+import { Route } from 'react-router-dom';
 
 import LoginPage from './LoginPage';
 import WelcomePage from './WelcomePage';
 import FailedPage from './FailedPage';
 
 import PrivateRouteAuth from './privateroutes/PrivateRouteAuth';
+import { connect } from 'react-redux';
+
+import {checkLogin} from '../actions/loginAction'; 
 
 
 
 class RouterPage extends Component {
 
-    constructor(props) {
-        super(props)
-
-        this.state = {
-            authed : false,
-            domain : 'http://localhost:3001/'
-        }
-    }
-
-    signIn = () => {
-        this.setState({
-            authed : true
-        })
-    }
-
+    // Sayfamız render edilmeden önce local storage'da token durumunu sorguluyor.
     componentWillMount() {
-        const token = localStorage.getItem('jwttoken');
-        if (token) {
-            // Burada axios ile headerımıza token'ımızı koyup bir get request alarak 
-            // serverdan acaba tokenımızın onay alıp almayacagına bakacagız.
-
-            const AuthStr = 'Bearer '.concat(token); 
-            axios.get(this.state.domain + 'getir/reactonay', {headers : { Authorization : AuthStr }})
-                .then(response => {
-                        if (response.data.status === 200) {
-                            this.setState({authed : true})
-                        } 
-                    })
-                .catch(err => console.log(err))
-
-        } else {
-            console.log('token bulamadım knk')
-        }
+        this.props.dispatch(checkLogin());
     }
+    
 
     render() {
     return (
-        <Router>
-            <Route path="/" exact render={(props) => <LoginPage {...props} Domain={this.state.domain} auth={this.signIn} loginStatus={this.state.authed} />} />
-            <PrivateRouteAuth path="/welcome" authed={this.state.authed} component={WelcomePage} />
+        <div>
+            <Route path="/" exact component={LoginPage} />
+            <PrivateRouteAuth path="/welcome" authed={this.props.user.loginStatus} component={WelcomePage} />
             <Route path="/failed" component={FailedPage} />
-        </Router>
+        </div>
            )
     }
 }
 
-export default RouterPage;
+const mapStateToProps = state => {
+    return ({
+        user : state.userReducer
+            })
+}
+
+export default connect(mapStateToProps)(RouterPage);

@@ -1,66 +1,67 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 
 import {Redirect} from 'react-router-dom';
+import {connect} from 'react-redux';
+
+import {usernameAction, passwordAction, submitAction} from '../actions/loginAction';
 
 
-
-export default class LoginPage extends Component {
+class LoginPage extends Component {
 
   constructor(props) {
     super(props);
-
-    this.state = {
-      username : '',
-      password : '',
-    }
-    this.updateFunc = this.updateFunc.bind(this);
+    
+    this.sendUsername = this.sendUsername.bind(this);
+    this.sendPassword = this.sendPassword.bind(this);
     this.submitFunc = this.submitFunc.bind(this);
   }
 
 
-  updateFunc(e) {
-    this.setState({
-      [e.target.name] : e.target.value
-    })
+  sendUsername(e) {
+    const data = {username : e.target.value}
+    this.props.dispatch(usernameAction(data));
+  }
+
+  sendPassword(e){
+    const data = {password : e.target.value}
+    this.props.dispatch(passwordAction(data))
   }
 
   submitFunc(e) {
-    axios.post(this.props.Domain + 'login', {
-      username : this.state.username,
-      password : this.state.password
-    })
-    .then((response) => {
-      const res = JSON.parse(response.request.response);
-      if (res.status) {
-        this.props.auth();
-        localStorage.setItem('jwttoken', res.token);
-        this.props.history.push('/welcome') 
-      } else {
-        this.props.history.push('/failed')
-      }
-    })
-    .catch((err) => {
-      console.log(err);
-    })
+    this.props.dispatch(submitAction());
     e.preventDefault();
   }
 
+
   render() {
 
-    if (this.props.loginStatus) { return ( <Redirect to={{pathname: '/welcome', state: {from: this.props.location}}} /> ) } else {
+    if (this.props.user.loginStatus) { return(<Redirect to={{pathname : '/welcome'}} />) } 
+    
+   else if (this.props.user.loginFailed) { return (<Redirect to={{pathname : '/failed'}} />) }
+    
+    else {
     return(
       <div style={{margin : 30}}>
         <h2>Giriş Ekranı</h2>
         <form onSubmit={this.submitFunc}>
-      <input name='username' value={this.state.username} onChange={this.updateFunc} placeholder='username'/>
-      <input name='password' value={this.state.password} onChange={this.updateFunc} placeholder='password' type="password"/>
-      <button>Giriş Yap</button>
+      <input name='username' value={this.props.user.username} onChange={this.sendUsername.bind(this)} placeholder='username'/>
+      <input name='password' value={this.props.user.password} onChange={this.sendPassword.bind(this)} placeholder='password' type="password"/>
+      <button type="submit">Giriş Yap</button>
         </form> 
+        <p>{this.props.user.username}</p>
+        <p>{this.props.user.password}</p> 
       </div>
     )
     }
   }
 }
+
+const mapStateToProps = state => {
+  return {
+    user : state.userReducer
+  }
+}
+
+export default connect(mapStateToProps)(LoginPage);
 
 
