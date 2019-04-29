@@ -35,24 +35,27 @@ class LoginPage extends Component {
 
   render() {
 
-    if (this.props.user.loginStatus) { return(<Redirect to={{pathname : '/welcome'}} />) } 
-    
-   else if (this.props.user.loginFailed) { return (<Redirect to={{pathname : '/failed'}} />) }
-    
-    else {
-    return(
+    const loginScreen = (
       <div style={{margin : 30}}>
-        <h2>Giriş Ekranı</h2>
-        <form onSubmit={this.submitFunc}>
-      <input name='username' value={this.props.user.username} onChange={this.sendUsername.bind(this)} placeholder='username'/>
-      <input name='password' value={this.props.user.password} onChange={this.sendPassword.bind(this)} placeholder='password' type="password"/>
-      <button type="submit">Giriş Yap</button>
-        </form> 
-        <p>{this.props.user.username}</p>
-        <p>{this.props.user.password}</p> 
-      </div>
+      <h2>Giriş Ekranı</h2>
+      <form onSubmit={this.submitFunc}>
+    <input name='username' value={this.props.user.username} onChange={this.sendUsername.bind(this)} placeholder='username'/>
+    <input name='password' value={this.props.user.password} onChange={this.sendPassword.bind(this)} placeholder='password' type="password"/>
+    <button type="submit">Giriş Yap</button>
+      </form> 
+      <p>{this.props.user.username}</p>
+      <p>{this.props.user.password}</p> 
+    </div>
     )
-    }
+
+    if (this.props.user.loginStatus)
+      { return(<Redirect to={{pathname : '/welcome'}} />) } 
+    
+      else if (this.props.user.loginFailed) 
+        { return (<Redirect to={{pathname : '/failed'}} />) }
+      
+      else 
+        {return loginScreen;}
   }
 }
 

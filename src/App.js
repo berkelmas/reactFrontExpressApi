@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
-
+import './App.css';
 import RouterPage from './components/RouterPage';
 
 class App extends Component {
-
   render() {
     return (
-      <RouterPage/>
+      <div>
+        <RouterPage/>
+
+      </div>
     );
   }
 }
