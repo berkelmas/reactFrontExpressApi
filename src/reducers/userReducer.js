@@ -1,7 +1,7 @@
 const initialState = {
     username : '',
     password : '',
-    domain: 'http://68.183.72.124/',
+    domain: 'http://localhost:3001/',
     loginStatus : false,
     loginFailed: false
 }
