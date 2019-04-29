@@ -1,8 +1,8 @@
 const initialState = {
     username : '',
     password : '',
-    domain: 'http://http://68.183.72.124/',
-    loginStatus : false, 
+    domain: 'http://68.183.72.124/',
+    loginStatus : false,
     loginFailed: false
 }
 
